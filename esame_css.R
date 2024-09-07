@@ -2,9 +2,6 @@ library(tree)
 library(randomForest)
 library(gbm)
 
-compute_mse <- function(preds, truth) {
-  mean((preds - truth)^2)
-}
 #Data loading and modifications
 country_data <- read.csv("country_stats.csv")
 
@@ -95,7 +92,6 @@ boosted <- gbm(perceived_proportion ~ PIL2017 + actual_proportion + pil_change_t
 knitr::kable(summary(boosted))
 
 plot(boosted, i="percentage_educated")
-plot(boosted, i="pil_change_2017")
 
 #diff boosting
 #boosting
@@ -160,10 +156,6 @@ set.seed(1234)
 knitr::kable(summary(prob_boosted))
 
 
-yhat.boost <- predict(prob_boosted, newdata=country_data, n.trees=5000)
-compute_mse(yhat.boost, country_data$problem)
-
 plot(boosted, i="percentage_educated",xlab = "Difference in proportion", ylab = "Percentage of educated (ISCED level 3 or higher)")
-plot(boosted, i="pil_change_2017")
 
 
