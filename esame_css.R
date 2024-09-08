@@ -10,6 +10,8 @@ country_data$pil_change_total <- (country_data$PIL2017- country_data$PIL2014) / 
 
 country_data$difference <- country_data$perceived_proportion - country_data$actual_proportion
 
+#######Proportion of immigrants
+
 #Tree
 control <- tree.control(nobs = 28, mincut = 3, minsize = 6, mindev = 0.01) #We change the settings to allow more splits
 #the tree is going to be pruned later on so it should not matter
@@ -56,19 +58,14 @@ plot(prune_tree)
 text(prune_tree, pretty=0)
 title(main="Pruned regression tree")
 
-
-
-
-
-
 #Random forest
 
-set.seed(1234)
-n_pred <- ncol(country_data) - 6
-(rand_forest <- randomForest(perceived_proportion ~ PIL2017 + actual_proportion + pil_change_total + pil_change_2017 
-                             + poverty_risk_perc + percentage_educated + informed + friends_family + religion,
-                           data=country_data, importance=TRUE)) #the mtry argument is left empty so it defaults to a standard n/3
-importance(rand_forest)
+# set.seed(1234)
+# n_pred <- ncol(country_data) - 6
+# (rand_forest <- randomForest(perceived_proportion ~ PIL2017 + actual_proportion + pil_change_total + pil_change_2017 
+#                              + poverty_risk_perc + percentage_educated + informed + friends_family + religion,
+#                            data=country_data, importance=TRUE)) #the mtry argument is left empty so it defaults to a standard n/3
+# importance(rand_forest)
 
 
 #Random forest diff
@@ -84,14 +81,16 @@ set.seed(1234)
 (diff_forest2 <- randomForest(difference ~ percentage_educated + friends_family + religion + informed,
                              data=country_data, importance=TRUE, ntrees=5000)) #the mtry argument is left empty so it defaults to a standard n/3
 importance(diff_forest2)
-#boosting
-set.seed(1234)
-boosted <- gbm(perceived_proportion ~ PIL2017 + actual_proportion + pil_change_total + pil_change_2017
-               + poverty_risk_perc + percentage_educated + informed + friends_family + factor(religion), data=country_data, distribution="gaussian",
-               n.trees=5000, interaction.depth=3,  bag.fraction = 0.5, n.minobsinnode = 4)
-knitr::kable(summary(boosted))
 
-plot(boosted, i="percentage_educated")
+
+#boosting
+# set.seed(1234)
+# boosted <- gbm(perceived_proportion ~ PIL2017 + actual_proportion + pil_change_total + pil_change_2017
+#                + poverty_risk_perc + percentage_educated + informed + friends_family + factor(religion), data=country_data, distribution="gaussian",
+#                n.trees=5000, interaction.depth=3,  bag.fraction = 0.5, n.minobsinnode = 4)
+# knitr::kable(summary(boosted))
+# 
+# plot(boosted, i="percentage_educated")
 
 #diff boosting
 #boosting
